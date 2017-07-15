@@ -1,16 +1,16 @@
 #include "pch.h"
 #include "BreadthFirst.h"
+#include "GreedyBestFirst.h"
 
 using namespace std;
 using namespace Library;
 
 /****************************************************************************/
-bool DisplayGraph(const Graph& graph, const int32_t width, const int32_t height, const shared_ptr<Node>& start, const shared_ptr<Node>& end,
+void DisplayGraph(const Graph& graph, const int32_t width, const int32_t height, const shared_ptr<Node>& start, const shared_ptr<Node>& end,
 				  const set<shared_ptr<Node>>& path, const set<shared_ptr<Node>>& visitedNodes)
 {
 	assert(width > 0 && height > 0);
 
-	bool endReached = false;
 	auto& nodes = graph.Nodes();
 	string str;
 	for (int32_t y = 0; y < height; ++y)
@@ -39,16 +39,12 @@ bool DisplayGraph(const Graph& graph, const int32_t width, const int32_t height,
 
 			if (visitedNodes.find(currentNode) != visitedNodes.end())
 			{
-				str = "V ";
+				//str = "V ";
 			}
 
 			if (path.find(currentNode) != path.end())
 			{
 				str = "X ";
-				if (currentNode == end)
-				{
-					endReached = true;
-				}
 			}
 
 			if (currentNode == end)
@@ -69,8 +65,6 @@ bool DisplayGraph(const Graph& graph, const int32_t width, const int32_t height,
 			}
 		}
 	}
-
-	return endReached;
 }
 
 /****************************************************************************/
@@ -99,7 +93,7 @@ int main(int argc, char* argv[])
 	StopWatch sw;
 	BreadthFirst breadthFirst;
 
-	Point start(0, 3);
+	Point start(2, 3);
 	Point end(8, 8);
 
 	int32_t width, height;
@@ -110,6 +104,7 @@ int main(int argc, char* argv[])
 	set<shared_ptr<Node>> visitedNodes;
 
 	/******************************* Breadth First *************************************/
+	cout << "****************************************************************************" << endl;
 	cout << "Breadth First algorithm:" << endl << endl;
 
 	sw.Restart();
@@ -118,14 +113,41 @@ int main(int argc, char* argv[])
 	auto elapsed = sw.Elapsed();
 	set<shared_ptr<Node>> pathSet = BuildPath(path);
 
-	bool endReached = DisplayGraph(grid, width, height, startNode, endNode, pathSet, visitedNodes);
+	DisplayGraph(grid, width, height, startNode, endNode, pathSet, visitedNodes);
 
 	cout << "Breadth first took " << elapsed.count() << " microseconds.";
-	if (!endReached)
+	if (!pathSet.empty())
 	{
-		cout << "No path was found!";
+		cout << " No path was found!";
 	}
+	
+	cout << endl << "Number of visited node: " << visitedNodes.size();
+	cout << endl << endl << endl;
+
+	/******************************* Greedy Best First *************************************/
+	cout << "********************************************************************************" << endl;
+	cout << "Greedy Best First algorithm:" << endl << endl;
+
+	GreedyBestFirst greedyBestFirst;
+	visitedNodes.clear();
+
+	sw.Restart();
+	path = greedyBestFirst.FindPath(startNode, endNode, visitedNodes);
+	sw.Stop();
+	elapsed = sw.Elapsed();
+	pathSet = BuildPath(path);
+
+	DisplayGraph(grid, width, height, startNode, endNode, pathSet, visitedNodes);
+
+	cout << "Greedy Best first took " << elapsed.count() << " microseconds.";
+	if (pathSet.empty())
+	{
+		cout << " No path was found!";
+	}
+
+	cout << endl << "Number of visited node: " << visitedNodes.size();
 	cout << endl << endl;
+
 
 
 

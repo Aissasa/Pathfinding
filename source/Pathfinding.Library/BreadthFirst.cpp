@@ -9,7 +9,7 @@ namespace Library
 	deque<shared_ptr<Node>> BreadthFirst::FindPath(shared_ptr<Node> start, shared_ptr<Node> end, set<shared_ptr<Node>>& closedSet)
 	{
 		deque<shared_ptr<Node>> frontier;
-		frontier.push_front(start);
+		frontier.push_back(start);
 
 		bool endReached = false;
 
@@ -30,7 +30,7 @@ namespace Library
 				}
 
 				neighborSharedPtr->SetParent(currentNode);
-				frontier.push_front(neighborSharedPtr);
+				frontier.push_back(neighborSharedPtr);
 				
 				// if the end is reached, then stop
 				if (frontier.front() == end)

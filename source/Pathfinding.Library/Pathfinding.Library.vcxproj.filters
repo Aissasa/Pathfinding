@@ -14,6 +14,10 @@
     <ClCompile Include="BreadthFirst.cpp">
       <Filter>Search Algorithms</Filter>
     </ClCompile>
+    <ClCompile Include="GreedyBestFirst.cpp">
+      <Filter>Search Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="Heuristics.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -29,6 +33,10 @@
     <ClInclude Include="BreadthFirst.h">
       <Filter>Search Algorithms</Filter>
     </ClInclude>
+    <ClInclude Include="GreedyBestFirst.h">
+      <Filter>Search Algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="Heuristics.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Point.inl" />

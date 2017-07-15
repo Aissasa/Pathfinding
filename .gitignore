@@ -4,3 +4,4 @@ source/Pathfinding.ConsoleApplication/obj/
 source/Pathfinding.Library.Cli/bin/
 source/Pathfinding.Library.Cli/obj/
 source/Pathfinding.Library/obj/
+*.opendb
