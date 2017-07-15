@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "BreadthFirst.h"
 #include "GreedyBestFirst.h"
+#include "AStar.h"
+#include "Dijkstra.h"
 
 using namespace std;
 using namespace Library;
@@ -90,22 +92,58 @@ int main(int argc, char* argv[])
 	UNREFERENCED_PARAMETER(argc);
 	UNREFERENCED_PARAMETER(argv);
 
-	StopWatch sw;
-	BreadthFirst breadthFirst;
-
-	Point start(2, 3);
-	Point end(8, 8);
-
 	int32_t width, height;
 	auto grid = GridHelper::LoadGridFromFile("Grid.grid", width, height);
+
+	Point start;
+	Point end;
+
+	while (true)
+	{
+		int32_t x1, y1, x2, y2;
+		cout << "Enter a valid start point coordinates:" << endl;
+		cout << "X: ";
+		cin >> x1;
+		cout << "Y: ";
+		cin >> y1;
+
+		Point s(x1, y1);
+
+		if (!grid.Contains(s) || grid.At(s)->Type() == NodeType::Wall)
+		{
+			cout << endl << "This point is not valid!" << endl << endl;
+			continue;
+		}
+		start = s;
+
+		cout << endl <<"Enter a valid end point coordinates:" << endl;
+		cout << "X: ";
+		cin >> x2;
+		cout << "Y: ";
+		cin >> y2;
+
+		Point e(x2, y2);
+
+		if (!grid.Contains(e) || grid.At(e)->Type() == NodeType::Wall || s.X() == e.X() && e.Y() == s.Y())
+		{
+			cout << endl << "This point is not valid!" << endl << endl;
+			continue;
+		}
+		end = e;
+
+		break;
+	}
 
 	auto startNode = grid.At(start);
 	auto endNode = grid.At(end);
 	set<shared_ptr<Node>> visitedNodes;
+	StopWatch sw;
 
 	/******************************* Breadth First *************************************/
-	cout << "****************************************************************************" << endl;
+	cout << endl << "****************************************************************************" << endl;
 	cout << "Breadth First algorithm:" << endl << endl;
+
+	BreadthFirst breadthFirst;
 
 	sw.Restart();
 	deque<shared_ptr<Node>> path = breadthFirst.FindPath(startNode, endNode, visitedNodes);
@@ -116,18 +154,21 @@ int main(int argc, char* argv[])
 	DisplayGraph(grid, width, height, startNode, endNode, pathSet, visitedNodes);
 
 	cout << "Breadth first took " << elapsed.count() << " microseconds.";
-	if (!pathSet.empty())
+	if (pathSet.empty())
 	{
 		cout << " No path was found!";
 	}
 	
-	cout << endl << "Number of visited node: " << visitedNodes.size();
-	cout << endl << endl << endl;
+	cout << endl << "Number of visited nodes: " << visitedNodes.size() << endl;
+	cout << "Path length: " << pathSet.size() << endl;
+	cout << endl;
+
 
 	/******************************* Greedy Best First *************************************/
 	cout << "********************************************************************************" << endl;
 	cout << "Greedy Best First algorithm:" << endl << endl;
 
+	grid.Reset();
 	GreedyBestFirst greedyBestFirst;
 	visitedNodes.clear();
 
@@ -145,13 +186,68 @@ int main(int argc, char* argv[])
 		cout << " No path was found!";
 	}
 
-	cout << endl << "Number of visited node: " << visitedNodes.size();
-	cout << endl << endl;
+	cout << endl << "Number of visited nodes: " << visitedNodes.size() << endl;
+	cout << "Path length: " << pathSet.size() << endl;
+	cout << endl;
 
+
+	/******************************* Dijkstra *************************************/
+	cout << "********************************************************************************" << endl;
+	cout << "Dijkstra algorithm:" << endl << endl;
+
+	grid.Reset();
+	Dijkstra dijkstra;
+	visitedNodes.clear();
+
+	sw.Restart();
+	path = dijkstra.FindPath(startNode, endNode, visitedNodes);
+	sw.Stop();
+	elapsed = sw.Elapsed();
+	pathSet = BuildPath(path);
+
+	DisplayGraph(grid, width, height, startNode, endNode, pathSet, visitedNodes);
+
+	cout << "Dijkstra took " << elapsed.count() << " microseconds.";
+	if (pathSet.empty())
+	{
+		cout << " No path was found!";
+	}
+
+	cout << endl << "Number of visited nodes: " << visitedNodes.size() << endl;
+	cout << "Path length: " << pathSet.size() << endl;
+	cout << endl;
+
+
+	/******************************* A Star *************************************/
+	cout << "********************************************************************************" << endl;
+	cout << "A* algorithm:" << endl << endl;
+
+	grid.Reset();
+	AStar aStar;
+	visitedNodes.clear();
+
+	sw.Restart();
+	path = aStar.FindPath(startNode, endNode, visitedNodes);
+	sw.Stop();
+	elapsed = sw.Elapsed();
+	pathSet = BuildPath(path);
+
+	DisplayGraph(grid, width, height, startNode, endNode, pathSet, visitedNodes);
+
+	cout << "A* took " << elapsed.count() << " microseconds.";
+	if (pathSet.empty())
+	{
+		cout << " No path was found!";
+	}
+
+	cout << endl << "Number of visited nodes: " << visitedNodes.size() << endl;
+	cout << "Path length: " << pathSet.size() << endl;
+	cout << endl;
 
 
 
 	cout << "Press Enter to Exit: ";
+	cin.get();
 	cin.get();
 
 	return 0;

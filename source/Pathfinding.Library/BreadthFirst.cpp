@@ -45,16 +45,7 @@ namespace Library
 		frontier.clear();
 		if (endReached)
 		{
-			frontier.push_front(end);
-			auto currentNode = end->Parent().lock();
-
-			while (currentNode != start)
-			{
-				frontier.push_front(currentNode);
-				currentNode = currentNode->Parent().lock();
-			}
-
-			frontier.push_front(currentNode);
+			frontier = BuildPath(start, end);
 		}
 
 		return move(frontier);

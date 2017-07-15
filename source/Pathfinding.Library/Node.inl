@@ -89,6 +89,7 @@ namespace Library
 	{
 		mHeuristic = 0.0f;
 		mPathCost = 0.0f;
+		mTotalCost = 0.f;
 		//mParent.reset();
 	}
 }

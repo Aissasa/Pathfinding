@@ -6,7 +6,7 @@ using namespace std;
 
 namespace Library
 {
-	const function<float(const Node& start, const Node& end)> GreedyBestFirst::heuristicFunc = Heuristics::ManhattanDistance;
+	const function<float(const Node& start, const Node& end)> GreedyBestFirst::kHeuristicFunc = Heuristics::ManhattanDistance;
 
 	/****************************************************************************/
 	deque<shared_ptr<Node>> GreedyBestFirst::FindPath(shared_ptr<Node> start, shared_ptr<Node> end, set<shared_ptr<Node>>& closedSet)
@@ -33,7 +33,7 @@ namespace Library
 				neighborSharedPtr->SetParent(currentNode);
 				if (openNodes.find(neighborSharedPtr) == openNodes.end())
 				{
-					neighborSharedPtr->SetHeuristic(heuristicFunc(*neighborSharedPtr, *end));
+					neighborSharedPtr->SetHeuristic(kHeuristicFunc(*neighborSharedPtr, *end));
 					openNodes.insert(neighborSharedPtr);
 				}
 			}
@@ -50,9 +50,9 @@ namespace Library
 			for (; it != openNodes.end(); ++it)
 			{
 				auto node = *it;
-				if (node->TotalCost() < min )
+				if (node->Heuristic() < min )
 				{
-					min = node->TotalCost();
+					min = node->Heuristic();
 					itMin = it;
 					currentNode = node;
 				}
@@ -70,16 +70,7 @@ namespace Library
 		deque<shared_ptr<Node>> path;
 		if (endReached)
 		{
-			path.push_front(end);
-			auto currentNodeInPath = end->Parent().lock();
-
-			while (currentNodeInPath != start)
-			{
-				path.push_front(currentNodeInPath);
-				currentNodeInPath = currentNodeInPath->Parent().lock();
-			}
-
-			path.push_front(currentNodeInPath);
+			path = BuildPath(start, end);
 		}
 
 		return move(path);

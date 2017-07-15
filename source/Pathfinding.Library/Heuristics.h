@@ -11,6 +11,6 @@ namespace Library
 		~Heuristics() = default;
 
 		static float ManhattanDistance(const Node& start, const Node& end);
-
+		static float ZeroHeuristic(const Node& start, const Node& end);
 	};
 }
